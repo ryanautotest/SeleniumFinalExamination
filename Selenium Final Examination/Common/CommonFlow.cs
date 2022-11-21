@@ -9,7 +9,7 @@ namespace SeleniumFinalExamination.Common
             public static void SelectWebTableFlow(IWebDriver driver)
             {
             HomePage homePage = new HomePage(driver);
-            homePage.SelectElement();
+            homePage.ClickToElement();
             MenuLeft elementPage = new MenuLeft(driver);
             elementPage.ClickWebTables();
             }

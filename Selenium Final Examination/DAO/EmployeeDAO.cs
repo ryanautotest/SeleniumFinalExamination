@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,22 @@ namespace SeleniumFinalExamination.DAO
 {
     public class EmployeeDAO
     {
-        public string firstName { get; set; }
-        public string lastName { get; set; }
-        public int Age { get; set; }
+        [JsonProperty("firstName")]
+        public string FirstName { get; set; }
+
+        [JsonProperty("lastName")]
+        public string LastName { get; set; }
+
+        [JsonProperty("age")]
+        public string Age { get; set; }
+
+        [JsonProperty("email")]
         public string Email { get; set; }
-        public int Salary { get; set; }
+
+        [JsonProperty("salary")]
+        public string Salary { get; set; }
+
+        [JsonProperty("department")]
         public string Department { get; set; }
     }
 }

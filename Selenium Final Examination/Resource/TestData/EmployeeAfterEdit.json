@@ -1,0 +1,26 @@
+﻿[
+  {
+    "firstName": "Cierra",
+    "lastName": "Vega",
+    "age": "39",
+    "email": "cierra@example.com",
+    "salary": "10000",
+    "department": "Insurance"
+  },
+  {
+    "firstName": "Alden",
+    "lastName": "Cantrell",
+    "age": "45",
+    "email": "alden@example.com",
+    "salary": "12000",
+    "department": "Compliance"
+  },
+  {
+    "firstName": "Toan",
+    "lastName": "Nguyen",
+    "age": "30",
+    "email": "toan@gmail.com",
+    "salary": "35000",
+    "department": "Automation Tester"
+  }
+]

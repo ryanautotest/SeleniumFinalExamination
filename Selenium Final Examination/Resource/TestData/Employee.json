@@ -1,4 +1,4 @@
-﻿{
+﻿[
   {
     "firstName": "Cierra",
     "lastName": "Vega",
@@ -23,4 +23,4 @@
     "salary": "2000",
     "department": "Legal"
   }
-}
+]

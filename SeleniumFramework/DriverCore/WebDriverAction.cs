@@ -15,6 +15,7 @@ namespace SeleniumFramework.DriverCore
     public class WebDriverAction
     {
         public IWebDriver driver;
+        public WebDriverWait wait_;
 
         public WebDriverAction(IWebDriver driver)
         {
@@ -42,7 +43,11 @@ namespace SeleniumFramework.DriverCore
         {
             return driver.FindElements(ByXpath(locator));
         }
-
+        public void GoToURL(string url)
+        {
+            driver.Navigate().GoToUrl(url);
+            HtmlReport.Pass("Go to URL: " + url);
+        }
         public void Click(IWebElement e)
         {
             try
@@ -70,11 +75,28 @@ namespace SeleniumFramework.DriverCore
             }
             catch (Exception ex)
             {
+                throw ex;
                 TestContext.WriteLine("Click into element " + locator + " failed");
                 HtmlReport.Fail("Click into element " + locator + " failed", TakeScreenShot());
-                throw ex;
             }
         }
+
+        //click by dynamic xpath
+        public void ClickToElementWithKey(String locator, string key)
+        {
+            try
+            {
+                FindElementByXpath(locator).Click();
+                TestContext.WriteLine("Click into element " + locator + " successfuly");
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+                TestContext.WriteLine("Click into element " + locator + " failed");
+                HtmlReport.Fail("Click into element " + locator + " failed", TakeScreenShot());
+            }
+        }
+
         public void SendKeys_(IWebElement e, string key)
         {
             try
@@ -103,6 +125,27 @@ namespace SeleniumFramework.DriverCore
                 throw ex;
             }
         }
+        
+        // action clear
+        
+        public void ClearAndSendKey(string locator, string key)
+        {
+            try
+            {
+                FindElementByXpath(locator).Clear();
+                FindElementByXpath(locator).SendKeys(key);
+                TestContext.WriteLine("Sendkey into element " + locator + " successfuly");
+                HtmlReport.Pass("Sendkey into element " + locator + " successfuly");
+            }
+            catch (Exception ex)
+            {
+                TestContext.WriteLine("Sendkey into element " + locator + " failed");
+                HtmlReport.Fail("Sendkey into element " + locator + " failed", TakeScreenShot());
+                throw ex;
+            }
+
+        }
+
         // action select option
         public void SelectOption(String locator, String key)
         {
@@ -158,38 +201,42 @@ namespace SeleniumFramework.DriverCore
         {
             try
             {
+                Boolean tf =  FindElementByXpath(locator).Displayed;
+                return tf;
                 TestContext.WriteLine("Element " + locator + " is Displayed");
                 HtmlReport.Pass("Element " + locator + " is Displayed");
-                return FindElementByXpath(locator).Displayed;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                throw new NoSuchElementException();
+                TestContext.WriteLine("Element " + locator + " is no longer Displayed");
+                HtmlReport.Fail("Element " + locator + " is no longer Displayed", TakeScreenShot());
+                return false;
             }
 
         }
-            public Boolean IsElementEnable(string locator)
-            {
+        public Boolean IsElementEnable(string locator)
+        {
                 return FindElementByXpath(locator).Enabled;
                 TestContext.WriteLine("Element " + locator + " is Enabled");
                 HtmlReport.Pass("Element " + locator + " is Clickable");
-            }
+        }
 
             // action get screenshot
 
-            public string TakeScreenShot()
-            {
+        public string TakeScreenShot()
+        {
                 string path = HtmlReportDirectory.SCREENSHOT_PATH + ("/screenshot_" + DateTime.Now.ToString("yyyyMMddHHmmss")) + ".png";
                 var screenshot = ((ITakesScreenshot)driver).GetScreenshot();
                 screenshot.SaveAsFile(path, ScreenshotImageFormat.Png);
                 return path;
-
-            }
+        }
 
             /*public IWebElement WaitForClickable()
             {
                 return WebDriverManager_.GetCurrentDriver().WaitForElementToBeClickable(locator, timeout);
             }*/
+
+        //highlight
             public IWebElement highlightElement(IWebElement element)
             {
                 IJavaScriptExecutor jse = (IJavaScriptExecutor)driver;

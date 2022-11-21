@@ -18,10 +18,11 @@ namespace SeleniumFinalExamination.PageObject
         }
 
         private string mainHeader = "//div[@class='main-header']";
-        private string txtElement = "//*[name()='path' and contains(@d,'M16 132h41')]";
+        private string txtElement = "(//div[@class='card-up'])[1]";
 
-        public void SelectElement()
+        public void ClickToElement()
         {
+            WaitForHomePageLoadedSuccessfully(); ;
             Click(txtElement);
         }
 
@@ -35,5 +36,16 @@ namespace SeleniumFinalExamination.PageObject
             return driver.Title;
         }
 
+        public void WaitForElementClickable()
+        {
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+        wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(ByXpath(txtElement)));
+        }
+
+        public void WaitForHomePageLoadedSuccessfully()
+        {
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementIsVisible(ByXpath(txtElement)));
+        }
     }
 }

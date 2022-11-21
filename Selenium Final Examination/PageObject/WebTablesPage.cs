@@ -1,4 +1,6 @@
-﻿using OpenQA.Selenium;
+﻿using NUnit.Framework;
+using OpenQA.Selenium;
+using SeleniumFinalExamination.DAO;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,19 +25,13 @@ namespace SeleniumFinalExamination.PageObject
         private string tbAge = "//input[@id='age']";
         private string tbSalary = "//input[@id='salary']";
         private string tbDepartment = "//input[@id='department']";
-        private string bttSubmit = "//button[@id='addNewRecordButton']";
+        private string bttSubmit = "//button[@id='submit']";
 
-
-
-
-
-
-        private string tableCols = "//div[@class='rt-table']//div[@class='rt-tr']//div[contains(@class, 'rt-th')]";
         private string rowGroupLocator = "//div[@role='rowgroup']";
         private string rowLocator = "//div[@role='rowgroup']//div[@role='row']";
         private string rowContent = "//div[@role='gridcell']";
 
-
+        //private string bttEdit = "//div[contains(text(),'" + FirstName + "')]/..//span[@title='Edit']";
 
         public string GetTextWebTable()
         {
@@ -47,61 +43,67 @@ namespace SeleniumFinalExamination.PageObject
             return GetText(mainHeader);
         }
 
-        /*public string GetTextFromTable()
-        {
-            WebElement htmltable = FindElementByXpath("//*[@id='main']/table[1]/tbody");
-            List<WebElement> rows = htmltable.FindElements("tr");
-
-            for (int rnum = 0; rnum < rows.size(); rnum++)
-            {
-                List<WebElement> columns = rows.get(rnum).findElements(By.tagName("th"));
-                System.out.println("Number of columns:" + columns.size());
-
-                for (int cnum = 0; cnum < columns.size(); cnum++)
-                {
-                    System.out.println(columns.get(cnum).getText());
-                }
-            }
-        }*/
-
-
-        /*public void GetDataFromTable()
+        //get data from table, split
+        public List<List<string>> GetDataFromTable()
         {
             IList<IWebElement> rowGroup = FindElementsByXpath(rowGroupLocator);
             IList<IWebElement> row = FindElementsByXpath(rowLocator);
 
-            var b = FindElementsByXpath(rowContent);
+            List<string> cellContent = FindElementsByXpath(rowContent).Select(x => x.Text).ToList();
+            var splitted = cellContent.Select(
+                (v, i) => new { val = v, idx = i }
+                ).GroupBy(x => x.idx / 7)
+                .Select(g => g.Select(y => y.val).ToList()).ToList();
 
-            foreach (var item in row)
-            {
-                for(int i = 1; i < b.Count(); i++)
-                {
-                    var a =  row..FindElementByXpath(By.XPath(rowContent));
-                }
-            }
-            //}
+            return splitted;
         }
 
-        private IWebElement getInsideElement(IWebElement el, By locator) {
+        private IWebElement getInsideElement(IWebElement el, By locator)
+        {
             return el.FindElement(locator);
-        }*/
+        }
 
         public void ClickAdd()
         {
             Click(bttAdd);
         }
 
-        public void AddNewEmployee(string firstName, string lastName, string email, string age, string salary, string department)
+        public void AddNewEmployee(EmployeeDAO employee)
         {
-            SendKeys_(tbFirstName, firstName);
-            SendKeys_(tbLastName, lastName);
-            SendKeys_(tbEmail, email);
-            SendKeys_(tbAge, age);
-            SendKeys_(tbSalary, salary);
-            SendKeys_(tbDepartment, department);
+            SendKeys_(tbFirstName, employee.FirstName);
+            SendKeys_(tbLastName, employee.LastName);
+            SendKeys_(tbEmail, employee.Email);
+            SendKeys_(tbAge, employee.Age.ToString());
+            SendKeys_(tbSalary, employee.Salary.ToString());
+            SendKeys_(tbDepartment, employee.Department);
             Click(bttSubmit);
         }
 
-        public void Click 
+        public void ClickEditByName(string FirstName)
+        {
+            Click(FindElementByXpath("//div[contains(text(),'" + FirstName + "')]/..//span[@title='Edit']"));
+        }
+
+        public void EditEmployee(EmployeeDAO employee)
+        {
+            ClearAndSendKey(tbFirstName, employee.FirstName);
+            ClearAndSendKey(tbLastName, employee.LastName);
+            ClearAndSendKey(tbEmail, employee.Email);
+            ClearAndSendKey(tbAge, employee.Age.ToString());
+            ClearAndSendKey(tbSalary, employee.Salary.ToString());
+            ClearAndSendKey(tbDepartment, employee.Department);
+            Click(bttSubmit);
+        }
+
+        public void DeleteEmployeeByName(string FirstName)
+        {
+            Click(FindElementByXpath("//div[contains(text(),'" + FirstName + "')]/..//span[@title='Delete']"));
+        }
+
+        public Boolean EmployeeDeleted(string FirstName)
+        {
+            IsElementDisplay("//div[contains(text(),'" + FirstName + "')]");
+            return false;
+        }
     }
 }
